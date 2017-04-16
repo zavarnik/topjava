@@ -14,25 +14,29 @@ import ru.javawebinar.topjava.repository.UserRepository;
 import javax.sql.DataSource;
 import java.util.List;
 
+/**
+ * User: gkislin
+ * Date: 26.08.2014
+ */
+
 @Repository
 public class JdbcUserRepositoryImpl implements UserRepository {
 
     private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
 
-    private final JdbcTemplate jdbcTemplate;
-
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    private final SimpleJdbcInsert insertUser;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public JdbcUserRepositoryImpl(DataSource dataSource, JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-        this.insertUser = new SimpleJdbcInsert(dataSource)
-                .withTableName("users")
-                .usingGeneratedKeyColumns("id");
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-        this.jdbcTemplate = jdbcTemplate;
-        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    private SimpleJdbcInsert insertUser;
+
+    @Autowired
+    public JdbcUserRepositoryImpl(DataSource dataSource) {
+        this.insertUser = new SimpleJdbcInsert(dataSource)
+                .withTableName("USERS")
+                .usingGeneratedKeyColumns("id");
     }
 
     @Override
