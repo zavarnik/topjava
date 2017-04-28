@@ -36,7 +36,7 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 @ActiveProfiles(Profiles.ACTIVE_DB)
-public class MealServiceTest {
+public abstract class MealServiceTest {
     private static final Logger LOG = LoggerFactory.getLogger(MealServiceTest.class);
     private static StringBuilder results = new StringBuilder();
 
@@ -127,5 +127,23 @@ public class MealServiceTest {
                 service.getBetweenDates(
                         LocalDate.of(2015, Month.MAY, 30),
                         LocalDate.of(2015, Month.MAY, 30), USER_ID));
+    }
+    //Тестируем получение списка с юзером
+    @Test
+    public void testGetAllWithUser() throws Exception {
+        MATCHER.assertCollectionEquals(USER_MEALS_DEEP, service.getAllWithUser(USER_ID));
+    }
+
+    //Тестируем получение еды вместе с юзером
+    @Test
+    public void testGetWithUser() throws Exception {
+        MATCHER.assertEquals(MEAL1_DEEP, service.getWithUser(MEAL1_ID, USER_ID));
+    }
+
+    //Тестируем попытку получения чужой еды с юзером
+    @Test
+    public void testGetWithUserNotFound() throws Exception {
+        thrown.expect(NotFoundException.class);
+        MATCHER.assertEquals(MEAL1_DEEP, service.getWithUser(MEAL1_ID, ADMIN_ID));
     }
 }

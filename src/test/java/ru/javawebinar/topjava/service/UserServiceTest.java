@@ -11,14 +11,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.Profiles;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 import static ru.javawebinar.topjava.UserTestData.*;
 
@@ -29,7 +29,7 @@ import static ru.javawebinar.topjava.UserTestData.*;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 @ActiveProfiles(Profiles.ACTIVE_DB)
-public class UserServiceTest {
+public abstract class UserServiceTest {
 
     static {
         // Only for postgres driver logging
@@ -38,7 +38,7 @@ public class UserServiceTest {
     }
 
     @Autowired
-    private UserService service;
+    protected UserService service;
 
     @Before
     public void setUp() throws Exception {
@@ -100,4 +100,26 @@ public class UserServiceTest {
         service.update(updated);
         MATCHER.assertEquals(updated, service.get(USER_ID));
     }
+
+    @Test
+    public void testGetAllWithMeals() throws Exception {
+        MATCHER.assertCollectionEquals(USERS_DEEP, service.getAllWithMeals());
+    }
+
+    @Test
+    public void testUpdateWithMeals() throws Exception {
+
+        User updated = new User(USER);
+
+        List<Meal> meals = new ArrayList<>(MealTestData.USER_MEALS_DEEP);
+        updated.setMeals(meals);
+
+        updated.setName("UpdatedName");
+        updated.setCaloriesPerDay(330);
+        if ((updated.getMeals() != null) && (!updated.getMeals().isEmpty()))
+            updated.getMeals().remove(0);
+        service.update(updated);
+        MATCHER.assertEquals(updated, service.getWithMeals(USER_ID));
+    }
+
 }
