@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.User;
 
+import java.util.Date;
 import java.util.List;
 
 @Transactional(readOnly = true)
@@ -30,4 +31,21 @@ public interface CrudUserRepository extends JpaRepository<User, Integer> {
 
     User getByEmail(String email);
 
+    @Query("SELECT DISTINCT(u) FROM User u JOIN FETCH u.meals ORDER BY u.name, u.email")
+    List<User> getAllWithMeals();
+
+    @Query("SELECT DISTINCT(u) FROM User u JOIN FETCH u.meals WHERE u.id = ?1")
+    User getWithMeals(int id);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE User u SET " +
+            " u.name = ?2," +
+            " u.email = ?3," +
+            " u.password = ?4," +
+            " u.enabled = ?5," +
+            " u.registered = ?6," +
+            " u.caloriesPerDay = ?7 " +
+            " WHERE u.id=?1")
+    int save(Integer id, String name, String email, String password, Boolean enabled, Date registered, Integer caloriesPerDay);
 }

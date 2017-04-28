@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -50,4 +51,19 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
                 .findFirst()
                 .orElse(null);
     }
+    @Override
+    public Collection<User> getAllWithMeals() {
+        return null;
+    }
+
+    @Override
+    public User getWithMeals(int id) {
+        return null;
+    }
+
+    @Override
+    public User updateLazy(User user){
+        return null;
+    }
+
 }

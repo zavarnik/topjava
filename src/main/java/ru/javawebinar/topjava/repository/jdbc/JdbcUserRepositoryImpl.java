@@ -8,16 +8,19 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
 import javax.sql.DataSource;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
 public class JdbcUserRepositoryImpl implements UserRepository {
 
     private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
+    private static final BeanPropertyRowMapper<Meal> MEAL_ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -71,5 +74,29 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     @Override
     public List<User> getAll() {
         return jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+    }
+    @Override
+    public Collection<User> getAllWithMeals() {
+        List<User> users = getAll();
+        users.forEach(u -> {
+            List<Meal> meals = jdbcTemplate.query(
+                    "SELECT * FROM meals WHERE user_id=? ORDER BY date_time DESC", MEAL_ROW_MAPPER, u.getId());
+            u.setMeals(meals);
+        });
+        return users;
+    }
+
+    @Override
+    public User getWithMeals(int id) {
+        User user = get(id);
+        List<Meal> meals = jdbcTemplate.query(
+                "SELECT * FROM meals WHERE user_id=? ORDER BY date_time DESC", MEAL_ROW_MAPPER, id);
+        meals.forEach(m->m.setUser(user));
+        user.setMeals(meals);
+        return user;
+    }
+
+    public User updateLazy(User user){
+        return save(user);
     }
 }

@@ -7,6 +7,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -49,7 +50,14 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
         return crudMealRepository.getBetween(startDate, endDate, userId);
     }
 
-    public Meal getWithUser(int id, int userId) {
-        return crudMealRepository.getWithUser(id, userId);
+    @Override
+    public Collection<Meal> getAllWithUser(int userId) {
+        return crudMealRepository.getAllWithUser(userId);
     }
+
+    @Override
+    public Meal getWithUser(int id, int userId) {
+        return crudMealRepository.getByIdWithUser(id, userId);
+    }
+
 }

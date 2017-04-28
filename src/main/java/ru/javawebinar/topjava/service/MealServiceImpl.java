@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.ValidationUtil;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
@@ -53,5 +55,14 @@ public class MealServiceImpl implements MealService {
     public Meal save(Meal meal, int userId) {
         Assert.notNull(meal, "meal must not be null");
         return repository.save(meal, userId);
+    }
+    @Override
+    public Collection<Meal> getAllWithUser(int userId) {
+        return repository.getAllWithUser(userId);
+    }
+
+    @Override
+    public Meal getWithUser(int id, int userId) {
+        return ValidationUtil.checkNotFoundWithId(repository.getWithUser(id, userId), id);
     }
 }

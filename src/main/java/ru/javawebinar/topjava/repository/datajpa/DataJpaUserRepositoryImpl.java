@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -38,5 +39,26 @@ public class DataJpaUserRepositoryImpl implements UserRepository {
     @Override
     public List<User> getAll() {
         return crudRepository.findAll(SORT_NAME_EMAIL);
+    }
+
+    @Override
+    public Collection<User> getAllWithMeals() {
+        return crudRepository.getAllWithMeals();
+    }
+
+    @Override
+    public User getWithMeals(int id) {
+        return crudRepository.getWithMeals(id);
+    }
+    @Override
+    public User updateLazy(User user) {
+        if (crudRepository.save(user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getPassword(),
+                user.isEnabled(),
+                user.getRegistered(),
+                user.getCaloriesPerDay()) == 0) return null;
+        return user;
     }
 }

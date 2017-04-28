@@ -10,6 +10,7 @@ import ru.javawebinar.topjava.util.DateTimeUtil;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +77,15 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         Map<Integer, Meal> meals = repository.get(userId);
         return meals == null ?
                 Stream.empty() : meals.values().stream().sorted(Comparator.comparing(Meal::getDateTime).reversed());
+    }
+    @Override
+    public Collection<Meal> getAllWithUser(int userId) {
+        return null;
+    }
+
+    @Override
+    public Meal getWithUser(int id, int userId) {
+        return null;
     }
 }
 
