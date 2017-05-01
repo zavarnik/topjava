@@ -1,4 +1,4 @@
-<!--suppress ALL -->
+
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -14,8 +14,8 @@
        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
     <jdbc:initialize-database data-source="dataSource" enabled="${database.init}">
-        <jdbc:script location="classpath:db/${jdbc.initLocation}"/>
-        <jdbc:script encoding="utf-8" location="classpath:db/${database.populateLocation}"/>
+        <jdbc:script location="classpath:db/initDB.sql"/>
+        <jdbc:script encoding="utf-8" location="classpath:db/populateDB.sql"/>
     </jdbc:initialize-database>
 
     <context:property-placeholder location="classpath:db/root.properties" system-properties-mode="OVERRIDE"
