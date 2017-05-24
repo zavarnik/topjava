@@ -41,14 +41,16 @@ public class JspMealController extends AbstractMealController {
 
     @PostMapping
     public String updateOrCreate(HttpServletRequest request) {
-        Meal meal = new Meal(LocalDateTime.parse(request.getParameter("dateTime")),
+        String id = request.getParameter("id");
+        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
+                LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.valueOf(request.getParameter("calories")));
 
-        if (request.getParameter("id").isEmpty()) {
+        if (meal.isNew()) {
             super.create(meal);
         } else {
-            super.update(meal, getId(request));
+            super.update(meal, meal.getId());
         }
         return "redirect:/meals";
     }

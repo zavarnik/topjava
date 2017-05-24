@@ -39,6 +39,10 @@ function updateTable() {
     });
 }
 
+function updateTableByData(data) {
+    datatableApi.clear().rows.add(data).draw();
+}
+
 function save() {
     var form = $('#detailsForm');
     $.ajax({
@@ -68,7 +72,7 @@ function successNoty(text) {
         text: text,
         type: 'success',
         layout: 'bottomRight',
-        timeout: 1500
+        timeout: true
     });
 }
 
