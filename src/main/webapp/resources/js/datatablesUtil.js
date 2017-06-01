@@ -2,8 +2,20 @@ var form;
 
 function makeEditable() {
     form = $('#detailsForm');
+    
+    $('#add').click(function () {
+        form.find(":input").val("");
+        $('#id').val(0);
+        $('#editRow').modal();
+    });
+
+    form.submit(function(){
+        save();
+        return false;
+    });
+
     $(document).ajaxError(function (event, jqXHR, options, jsExc) {
-        failNoty(jqXHR);
+        failNoty(event, jqXHR, options, jsExc);
     });
     // solve problem with cache in IE: https://stackoverflow.com/a/4303862/548473
     $.ajaxSetup({ cache: false });

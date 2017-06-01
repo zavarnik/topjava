@@ -1,11 +1,14 @@
-var ajaxUrl = "ajax/profile/meals/";
+var ajaxUrl = 'ajax/profile/meals/';
 var datatableApi;
+var contextModalTitle = "meals.edit";
+// $(document).ready(function () {
+
 
 function updateTable() {
     $.ajax({
         type: "POST",
-        url: ajaxUrl + "filter",
-        data: $("#filter").serialize(),
+        url: ajaxUrl + 'filter',
+        data: $('#filter').serialize(),
         success: updateTableByData
     });
 }
@@ -16,12 +19,22 @@ function clearFilter() {
 }
 
 $(function () {
-    datatableApi = $("#datatable").DataTable({
+    datatableApi = $('#datatable').DataTable({
+        "ajax": {
+            "url": ajaxUrl,
+            "dataSrc": ""
+        },
         "paging": false,
         "info": true,
         "columns": [
             {
-                "data": "dateTime"
+                "data": "dateTime",
+                "render":function (data,type,row) {
+                    if (type='display')    {
+                        return data.replace('T', ' ');
+                    }
+                    return data;
+                }
             },
             {
                 "data": "description"
@@ -30,12 +43,14 @@ $(function () {
                 "data": "calories"
             },
             {
-                "defaultContent": "Edit",
-                "orderable": false
+                "defaultContent": "",
+                "orderable": false,
+                "render": renderEditBtn
             },
             {
-                "defaultContent": "Delete",
-                "orderable": false
+                "defaultContent": "",
+                "orderable": false,
+                "render": renderDeleteBtn
             }
         ],
         "order": [
@@ -43,7 +58,19 @@ $(function () {
                 0,
                 "desc"
             ]
-        ]
+        ],
+        "createdRow": function (row, data, dataIndex) {
+            if (!data.enabled) {
+                $(row).addClass(data.exceed ? 'exceeded' : 'normal');
+            }
+        },
+        "initComplete": function () {
+            $('#filter').submit(function() {
+
+                updateTable();
+                return false;
+            });
+        makeEditable();
+        }
     });
-    makeEditable();
 });
