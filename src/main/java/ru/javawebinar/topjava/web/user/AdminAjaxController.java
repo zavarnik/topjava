@@ -2,19 +2,21 @@ package ru.javawebinar.topjava.web.user;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.View;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.service.UserService;
+
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.UserUtil;
 import ru.javawebinar.topjava.util.ValidationUtil;
+import ru.javawebinar.topjava.web.EmailValidator;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.List;
 
 @RestController
@@ -22,9 +24,7 @@ import java.util.List;
 public class AdminAjaxController extends AbstractUserController {
 
     @Autowired
-    public AdminAjaxController(UserService service) {
-        super(service);
-    }
+    EmailValidator emailValidator;
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,22 +47,20 @@ public class AdminAjaxController extends AbstractUserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createOrUpdate(@Valid UserTo userTo, BindingResult result) {
+    public void createOrUpdate(@Valid UserTo userTo, BindingResult result) {
+        emailValidator.validate(userTo,result);
         if (result.hasErrors()) {
-            // TODO change to exception handler
-            return ValidationUtil.getErrorResponse(result);
+            throw new ValidationException(ValidationUtil.getErrorResponse(result).getBody());
         }
         if (userTo.isNew()) {
             super.create(UserUtil.createNewFromTo(userTo));
         } else {
-            super.update(userTo, userTo.getId());
+            super.update(userTo);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Override
     @PostMapping(value = "/{id}")
-    public void enable(@PathVariable("id") int id, @RequestParam("enabled") boolean enabled) {
+    public void enabled(@PathVariable("id") int id, @RequestParam("enabled") boolean enabled) {
         super.enable(id, enabled);
     }
 }

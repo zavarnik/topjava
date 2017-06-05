@@ -1,5 +1,12 @@
 var ajaxUrl = "ajax/profile/meals/";
 var datatableApi;
+var editTitleKey = "meals.edit";
+
+// $(document).ready(function () {
+function clearFilter() {
+    $("#filter")[0].reset();
+    $.get(ajaxUrl, updateTableByData);
+}
 
 function updateTable() {
     $.ajax({
@@ -8,11 +15,6 @@ function updateTable() {
         data: $("#filter").serialize(),
         success: updateTableByData
     });
-}
-
-function clearFilter() {
-    $("#filter")[0].reset();
-    $.get(ajaxUrl, updateTableByData);
 }
 
 $(function () {

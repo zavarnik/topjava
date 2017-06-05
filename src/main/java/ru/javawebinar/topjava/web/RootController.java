@@ -20,9 +20,9 @@ import javax.validation.Valid;
 public class RootController extends AbstractUserController {
 
     @Autowired
-    public RootController(UserService service) {
-        super(service);
-    }
+    EmailValidator emailValidator;
+
+
 
     @GetMapping("/")
     public String root() {
@@ -56,7 +56,7 @@ public class RootController extends AbstractUserController {
         if (result.hasErrors()) {
             return "profile";
         } else {
-            super.update(userTo, AuthorizedUser.id());
+            super.update(userTo);
             AuthorizedUser.get().update(userTo);
             status.setComplete();
             return "redirect:meals";
@@ -72,6 +72,7 @@ public class RootController extends AbstractUserController {
 
     @PostMapping("/register")
     public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
+        emailValidator.validate(userTo,result);
         if (result.hasErrors()) {
             model.addAttribute("register", true);
             return "profile";
